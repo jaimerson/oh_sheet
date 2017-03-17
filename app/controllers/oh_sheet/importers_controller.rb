@@ -1,15 +1,14 @@
 module OhSheet
   class ImportersController < ApplicationController
-    rescue_from 'ActionController::ParameterMissing' do |e|
-      errors = [e.message]
-      render json: errors, status: :unprocessable_entity
-    end
-
     def import
-      file = params.require(:file_to_import)
-      ImporterJob.perform_later(importer_class_name, file.to_s)
+      process = ImportProcess.new(file: params.require(:file_to_import))
 
-      head :ok
+      if process.save
+        ImporterJob.perform_later(importer_class_name, process.id)
+        head :ok
+      else
+        render json: { errors: process.errors }, status: :unprocessable_entity
+      end
     rescue => e
       render json: { errors: [e.message] }, status: :unprocessable_entity
     end
