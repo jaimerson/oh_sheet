@@ -3,11 +3,6 @@ require 'rails_helper'
 RSpec.describe OhSheet::ImportersController do
   routes { OhSheet::Engine.routes }
 
-  class FooImporter
-    def initialize(file)
-    end
-  end
-
   describe 'POST import' do
     let(:params) do
       {
@@ -15,37 +10,22 @@ RSpec.describe OhSheet::ImportersController do
       }
     end
 
-    let(:file) { StringIO.new }
+    let(:file) { 'TODO: make this a fixture file upload' }
 
     context 'with the right params' do
-      let(:importer) { double(import: true) }
-
       before do
-        allow(FooImporter).to receive(:new).and_return(importer)
+        allow(OhSheet::ImporterJob).to receive(:perform_later)
       end
 
-      it 'returns a sucess response' do
+      it 'returns a success response' do
         post :import, resource_name: 'foo', **params
         expect(response).to be_success
       end
 
       it 'calls the importer for the given resource_name' do
-        expect(FooImporter).to receive(:new).and_return(importer)
+        expect(OhSheet::ImporterJob).to receive(:perform_later)
+          .with('FooImporter', file)
         post :import, resource_name: 'foo', **params
-      end
-
-      context 'when the importer has errors' do
-        let(:importer) { double(import: false, errors: ['Some errors :(']) }
-
-        it 'returns an error response' do
-          post :import, resource_name: 'foo', **params
-          expect(response.status).to eq(422)
-        end
-
-        it 'returns the importer errors' do
-          post :import, resource_name: 'foo', **params
-          expect(JSON.parse(response.body)['errors']).to eq(importer.errors)
-        end
       end
     end
 

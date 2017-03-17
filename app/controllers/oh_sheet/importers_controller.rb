@@ -7,19 +7,17 @@ module OhSheet
 
     def import
       file = params.require(:file_to_import)
-      importer = importer_from_params.new(file)
-      if importer.import
-        head :ok
-      else
-        render json: { errors: importer.errors }, status: :unprocessable_entity
-      end
+      ImporterJob.perform_later(importer_class_name, file.to_s)
+
+      head :ok
+    rescue => e
+      render json: { errors: [e.message] }, status: :unprocessable_entity
     end
 
     private
 
-    def importer_from_params
-      importer_name = params[:resource_name].camelize + 'Importer'
-      importer_name.constantize
+    def importer_class_name
+      params[:resource_name].camelize + 'Importer'
     end
   end
 end
