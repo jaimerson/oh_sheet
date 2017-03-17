@@ -7,7 +7,6 @@ module OhSheet
     end
 
     def import
-
     end
   end
 end

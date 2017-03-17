@@ -30,7 +30,7 @@ RSpec.describe OhSheet::ImporterJob do
   end
 
   context 'when the resource is not defined' do
-    let(:resource_name) { 'bar' }
+    let(:resource_name) { 'barbiz' }
 
     it 'raises an error' do
       expect { perform }.to raise_error(NameError)
@@ -41,9 +41,16 @@ RSpec.describe OhSheet::ImporterJob do
     let(:resource_name) { 'bar' }
     Bar = Class.new
 
-    it 'raises an error' do
-      expect { perform }
-        .to raise_error(NameError, 'You must define a BarParser class.')
+    it 'initializes the importer with the resource and a default parser' do
+      importer = instance_double(OhSheet::Importer)
+
+      expect(OhSheet::Importer).to receive(:new)
+        .with(process, resource: Bar, parser: OhSheet::Parser)
+        .and_return(importer)
+
+      expect(importer).to receive(:import)
+
+      perform
     end
   end
 

@@ -20,7 +20,7 @@ module OhSheet
       camelized = name.camelize + 'Parser'
       camelized.constantize
     rescue NameError
-      raise NameError, "You must define a #{camelized} class."
+      return Parser
     end
   end
 end
