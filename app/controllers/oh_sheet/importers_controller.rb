@@ -4,7 +4,7 @@ module OhSheet
       process = ImportProcess.new(file: params.require(:file_to_import))
 
       if process.save
-        ImporterJob.perform_later(importer_class_name, process.id)
+        ImporterJob.perform_later(params.require(:resource_name), process.id)
         head :ok
       else
         render json: { errors: process.errors }, status: :unprocessable_entity
@@ -14,9 +14,5 @@ module OhSheet
     end
 
     private
-
-    def importer_class_name
-      params[:resource_name].camelize + 'Importer'
-    end
   end
 end

@@ -26,7 +26,7 @@ RSpec.describe OhSheet::ImportersController do
 
       it 'calls the importer for the given resource_name' do
         expect(OhSheet::ImporterJob).to receive(:perform_later)
-          .with('FooImporter', process_id)
+          .with('foo', process_id)
         post :import, resource_name: 'foo', **params
       end
     end

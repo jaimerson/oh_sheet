@@ -1,6 +1,6 @@
 module OhSheet
   class ImporterJob < ApplicationJob
-    def perform(importer_name, file)
+    def perform(resource_name, file)
 
     end
   end
