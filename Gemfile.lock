@@ -4,7 +4,7 @@ PATH
     oh_sheet (0.1.0)
       creek (~> 1.1.2)
       paperclip (~> 5.0)
-      rails (~> 4.0)
+      rails (>= 4.0)
 
 GEM
   remote: https://rubygems.org/
